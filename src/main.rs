@@ -5,7 +5,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 const CORE_AFFINITY_SLOT_TICKER: usize = 1;
-const THREAD_PRIORITY_SLOT_TICKER: i32 = 90;
+const THREAD_PRIORITY_SLOT_TICKER: i32 = 99;
 
 fn create_slot_ticker(slot_duration: Duration) -> Receiver<(u64, Instant, Instant)> {
     let (slot_ticker_sender, slot_ticker_receiver) = channel();
@@ -47,6 +47,7 @@ fn create_slot_ticker(slot_duration: Duration) -> Receiver<(u64, Instant, Instan
                 }
                 last_tick = now;
                 absolute_slot_number += 1;
+                thread::sleep(slot_duration * 4 / 5);
             }
         }
     });
@@ -69,7 +70,7 @@ fn main() {
         let jitter = jitter.as_nanos() as i64;
 
         jitters.push(jitter);
-        if slot_number > 0 && slot_number % 200_000 == 0 {
+        if slot_number > 0 && slot_number % 100_000 == 0 {
             break;
         }
     }
